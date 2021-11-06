@@ -434,7 +434,6 @@ class RecipeDetailsViewController: UIViewController {
     }
     
     @objc func checkBoxButtonTapped(sender: IngredientButton) {
-        print(sender.ingredient)
         if shoppingList.contains(sender.ingredient) {
             PersistenceManager.updateWith(ingredient: sender.ingredient, actionType: .remove) { error in
                 print(error)

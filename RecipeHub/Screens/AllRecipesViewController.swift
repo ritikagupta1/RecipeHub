@@ -119,7 +119,7 @@ extension AllRecipesViewController: UICollectionViewDelegate {
         let screenSize = scrollView.frame.height
         
         if offsetY > contentHeight - screenSize {
-            guard  hasMoreRecipes else {
+            guard  hasMoreRecipes && !isSearching else {
                 return
             }
             getAllRecipes()

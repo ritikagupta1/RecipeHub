@@ -151,6 +151,113 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		B49E125727365BE5001C1F35 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0A9BEA7F26CAEC45003B5842 /* UIViewController+Child.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B49E125827365C06001C1F35 /* CustomViews */ = {
+			isa = PBXGroup;
+			children = (
+				B49E126027365D79001C1F35 /* ViewControllers */,
+				B49E125B27365C62001C1F35 /* Cell */,
+				B49E125A27365C56001C1F35 /* ImageView */,
+				B49E125927365C47001C1F35 /* Button */,
+			);
+			path = CustomViews;
+			sourceTree = "<group>";
+		};
+		B49E125927365C47001C1F35 /* Button */ = {
+			isa = PBXGroup;
+			children = (
+				C39B3A2E26B92DC200E3C4D3 /* AuthButton.swift */,
+				B40C85822735ACBA0045F614 /* IngredientButton.swift */,
+			);
+			path = Button;
+			sourceTree = "<group>";
+		};
+		B49E125A27365C56001C1F35 /* ImageView */ = {
+			isa = PBXGroup;
+			children = (
+				B4D06F9F2728092F009D2D8D /* RecipeImageView.swift */,
+			);
+			path = ImageView;
+			sourceTree = "<group>";
+		};
+		B49E125B27365C62001C1F35 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				B4D06F9D272806C9009D2D8D /* RecipeCell.swift */,
+				B49E1255273647F5001C1F35 /* IngredientCell.swift */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		B49E125C27365CB9001C1F35 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C3B6210026C85A750010B5A8 /* AllRecipes.swift */,
+				C393D8C326BD0B2900D75581 /* User.swift */,
+				C3B620FE26C858280010B5A8 /* Recipe.swift */,
+				B4E7B8EE272ED78C0058C234 /* Instruction.swift */,
+				B4E7B8F0272ED7CD0058C234 /* Ingredient.swift */,
+				B4E7B8F2272ED8230058C234 /* Step.swift */,
+				B4E7B8F4272ED8620058C234 /* equipment.swift */,
+				B40A2B1D27326836002FC2DB /* RecipeById.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		B49E125D27365CE6001C1F35 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				C3FA7FF826B85604000AADE3 /* SplashScreen.swift */,
+				B41727922712022500B24B36 /* SignUpViewController.swift */,
+				B41727942712026600B24B36 /* SignInViewController.swift */,
+				C3929FDC26BC164F00CE1C01 /* MainTabViewController.swift */,
+				B40C85802735A0700045F614 /* IngredientViewController.swift */,
+				B4D06F992727EA59009D2D8D /* AllRecipesViewController.swift */,
+				C3AECDE226C7CB680048B44B /* LogInOrSignupViewController.swift */,
+				B4E7B8EC272ED69F0058C234 /* RecipeDetailsViewController.swift */,
+				B4D06F9B2727EA73009D2D8D /* SearchRecipesViewController.swift */,
+				B4553FA727342D6300523F0C /* FavouriteRecipeViewController.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		B49E125E27365D38001C1F35 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				C3929FDF26BC1D0800CE1C01 /* NetworkManager.swift */,
+				B4553FA9273461F300523F0C /* PersistenceManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		B49E125F27365D57001C1F35 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				C39B3A2826B928C300E3C4D3 /* recipehubvideo.mp4 */,
+				C3FA7FFD26B85604000AADE3 /* Assets.xcassets */,
+				C3FA7FF426B85604000AADE3 /* AppDelegate.swift */,
+				C380BA9526B9C22600461A2E /* Utilities.swift */,
+				C3FA7FF626B85604000AADE3 /* SceneDelegate.swift */,
+				C3FA7FFF26B85604000AADE3 /* LaunchScreen.storyboard */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		B49E126027365D79001C1F35 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				B4B3D8D427330DB800732B97 /* RecipeAlertViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
 		B4F8CF90272889F8002D6C38 /* Font */ = {
 			isa = PBXGroup;
 			children = (
@@ -199,42 +306,15 @@
 		C3FA7FF326B85604000AADE3 /* RecipeHub */ = {
 			isa = PBXGroup;
 			children = (
+				B49E125F27365D57001C1F35 /* Support */,
+				B49E125E27365D38001C1F35 /* Managers */,
+				B49E125D27365CE6001C1F35 /* Screens */,
+				B49E125C27365CB9001C1F35 /* Model */,
+				B49E125827365C06001C1F35 /* CustomViews */,
+				B49E125727365BE5001C1F35 /* Extensions */,
 				B4F8CF90272889F8002D6C38 /* Font */,
-				C3FA7FF426B85604000AADE3 /* AppDelegate.swift */,
-				C3FA7FF626B85604000AADE3 /* SceneDelegate.swift */,
-				C3FA7FF826B85604000AADE3 /* SplashScreen.swift */,
-				C3FA7FFF26B85604000AADE3 /* LaunchScreen.storyboard */,
-				B40C85802735A0700045F614 /* IngredientViewController.swift */,
-				C39B3A2826B928C300E3C4D3 /* recipehubvideo.mp4 */,
-				C39B3A2E26B92DC200E3C4D3 /* AuthButton.swift */,
-				C380BA9526B9C22600461A2E /* Utilities.swift */,
 				C3244E2226BBB7F8001D7618 /* GoogleService-Info.plist */,
-				C3929FDC26BC164F00CE1C01 /* MainTabViewController.swift */,
-				C3929FDF26BC1D0800CE1C01 /* NetworkManager.swift */,
-				C393D8C326BD0B2900D75581 /* User.swift */,
-				C3AECDE226C7CB680048B44B /* LogInOrSignupViewController.swift */,
-				C3B620FE26C858280010B5A8 /* Recipe.swift */,
-				C3B6210026C85A750010B5A8 /* AllRecipes.swift */,
-				0A9BEA7F26CAEC45003B5842 /* UIViewController+Child.swift */,
 				C3FA800226B85604000AADE3 /* Info.plist */,
-				C3FA7FFD26B85604000AADE3 /* Assets.xcassets */,
-				B41727922712022500B24B36 /* SignUpViewController.swift */,
-				B41727942712026600B24B36 /* SignInViewController.swift */,
-				B4D06F992727EA59009D2D8D /* AllRecipesViewController.swift */,
-				B4D06F9B2727EA73009D2D8D /* SearchRecipesViewController.swift */,
-				B4D06F9D272806C9009D2D8D /* RecipeCell.swift */,
-				B4D06F9F2728092F009D2D8D /* RecipeImageView.swift */,
-				B4E7B8EC272ED69F0058C234 /* RecipeDetailsViewController.swift */,
-				B4E7B8EE272ED78C0058C234 /* Instruction.swift */,
-				B4E7B8F0272ED7CD0058C234 /* Ingredient.swift */,
-				B4E7B8F2272ED8230058C234 /* Step.swift */,
-				B4E7B8F4272ED8620058C234 /* equipment.swift */,
-				B40A2B1D27326836002FC2DB /* RecipeById.swift */,
-				B4B3D8D427330DB800732B97 /* RecipeAlertViewController.swift */,
-				B4553FA727342D6300523F0C /* FavouriteRecipeViewController.swift */,
-				B4553FA9273461F300523F0C /* PersistenceManager.swift */,
-				B40C85822735ACBA0045F614 /* IngredientButton.swift */,
-				B49E1255273647F5001C1F35 /* IngredientCell.swift */,
 			);
 			path = RecipeHub;
 			sourceTree = "<group>";
