@@ -9,10 +9,9 @@ import UIKit
 
 class RecipeDetailsViewController: UIViewController {
     
-    var recipe: Recipe!
+    var recipe: RecipeViewModel!
     let scrollView = UIScrollView()
     let contentView = UIView()
-    var isFavourite: Bool = false
     var delegate: FavouriteRecipeChanged?
     
     ///Outlets
@@ -25,17 +24,11 @@ class RecipeDetailsViewController: UIViewController {
     var servings = UILabel()
     let verticalStack = UIStackView()
     
-    var ingredients: [Ingredient] = []
-    var equipments: [Equipment] = []
-    var shoppingList: [Ingredient] = []
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
         title = recipe.title
         setupScrollView()
-        checkIfRecipeisfavourite()
-        findShoppingIngredients()
         configure()
         set(recipe: self.recipe)
         
@@ -46,32 +39,9 @@ class RecipeDetailsViewController: UIViewController {
         
     }
     
-    func findShoppingIngredients() {
-        PersistenceManager.retrieveShoppingIngredients(completed: { result in
-            switch result {
-            case .success(let shoppingList):
-                self.shoppingList = shoppingList
-            case .failure(let error):
-                print(error)
-            }
-        })
-    }
    
-    func checkIfRecipeisfavourite() {
-     PersistenceManager.retrieveFavouriteRecipesIds { result in
-            switch result {
-            case .success(let favouritesId):
-                if favouritesId.contains(self.recipe.id) {
-                    self.isFavourite = true
-                } else {
-                    self.isFavourite = false
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
-        
-    }
+   
+   
     func setupScrollView(){
             scrollView.translatesAutoresizingMaskIntoConstraints = false
             contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -89,14 +59,13 @@ class RecipeDetailsViewController: UIViewController {
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         }
     
-    func set(recipe: Recipe) {
+    func set(recipe: RecipeViewModel) {
         guard let image = recipe.image else {
-            print("HAAAAN")
             return
         }
         recipeImageView.downloadImage(from: image)
-        durationLabel.text = recipe.readyInMinutes.description + " minutes"
-        servings.text = recipe.servings.description + " servings"
+        durationLabel.text = recipe.durationLabel
+        servings.text = recipe.servingsLabel
     }
     
     func configure() {
@@ -122,17 +91,15 @@ class RecipeDetailsViewController: UIViewController {
         vegeterianImageView.image = UIImage(systemName: "leaf.fill")
         vegeterianImageView.tintColor = .systemGreen
         
-        
-       
-        
         bookmarkButton.translatesAutoresizingMaskIntoConstraints = false
-        if isFavourite {
+        if recipe.isRecipeFavourite {
             bookmarkButton.setBackgroundImage(UIImage(systemName: "bookmark.fill"), for: .normal)
         } else {
             bookmarkButton.setBackgroundImage(UIImage(systemName: "bookmark"), for: .normal)
         }
         bookmarkButton.tintColor = .black
         bookmarkButton.addTarget(self, action: #selector(bookMarkButtonTapped), for: .touchUpInside)
+        
         servingsImageView.translatesAutoresizingMaskIntoConstraints = false
         servingsImageView.image = UIImage(systemName: "person.2.fill")
         servingsImageView.tintColor = .darkGray
@@ -140,13 +107,9 @@ class RecipeDetailsViewController: UIViewController {
         servings.translatesAutoresizingMaskIntoConstraints = false
         servings.font = UIFont(name: "Montserrat-Medium", size: 16)
         
-        
         verticalStack.axis = .vertical
         verticalStack.translatesAutoresizingMaskIntoConstraints = false
         verticalStack.spacing = 20
-        
-       
-        
         
         let dishTypeStackView = UIStackView()
         dishTypeStackView.axis = .horizontal
@@ -206,17 +169,6 @@ class RecipeDetailsViewController: UIViewController {
             verticalStack.addArrangedSubview(cuisineTypeStackView)
         }
         
-        for instructions in recipe.analyzedInstructions {
-            for step in instructions.steps {
-                for ingredient in step.ingredients {
-                    if !self.ingredients.contains(ingredient) {
-                        self.ingredients.append(ingredient)
-                    }
-                }
-                
-            }
-        }
-        
         let totalIngredientStackView =  UIStackView()
         totalIngredientStackView.axis = .vertical
         totalIngredientStackView.spacing = 15
@@ -235,17 +187,15 @@ class RecipeDetailsViewController: UIViewController {
         
       
         
-        for ingredient in self.ingredients {
+        for ingredientViewModel in self.recipe.ingredientsViewModel {
             let ingredientView = UIStackView()
             ingredientView.axis = .horizontal
             ingredientView.alignment = .center
             ingredientView.spacing = 20
             
-            let checkBoxButton = IngredientButton(ingredient: ingredient)
-            print("*******************")
-            print(self.shoppingList)
-            print("*******************")
-            if shoppingList.contains(ingredient) {
+            let checkBoxButton = IngredientButton(ingredient: ingredientViewModel)
+            
+            if ingredientViewModel.isIngredientInShoppingList {
                 checkBoxButton.setBackgroundImage(UIImage(systemName: "checkmark.square"), for: .normal)
             } else {
                 checkBoxButton.setBackgroundImage(UIImage(systemName: "square"), for: .normal)
@@ -257,12 +207,12 @@ class RecipeDetailsViewController: UIViewController {
             
             
             let ingredientImageView = RecipeImageView(frame: .zero)
-            let downloadUrl = "https://spoonacular.com/cdn/ingredients_100x100/" + ingredient.image
+            let downloadUrl = "https://spoonacular.com/cdn/ingredients_100x100/" + ingredientViewModel.image
             ingredientImageView.downloadImage(from: downloadUrl)
             ingredientImageView.translatesAutoresizingMaskIntoConstraints = false
             
             let ingredientName = UILabel()
-            ingredientName.text = ingredient.name
+            ingredientName.text = ingredientViewModel.name
             ingredientName.translatesAutoresizingMaskIntoConstraints = false
             ingredientName.font =  UIFont(name: "Montserrat-Medium", size: 16)
             ingredientName.numberOfLines = 0
@@ -283,23 +233,12 @@ class RecipeDetailsViewController: UIViewController {
         
         }
         
-        if !ingredients.isEmpty{
+        if !recipe.ingredients.isEmpty{
             totalIngredientStackView.addArrangedSubview(ingredientStackLabel)
             totalIngredientStackView.addArrangedSubview(ingredientListStackView)
             verticalStack.addArrangedSubview(totalIngredientStackView)
         }
-        
-        
-        for instructions in recipe.analyzedInstructions {
-            for step in instructions.steps {
-                for equipment in step.equipment {
-                    if !self.equipments.contains(equipment) {
-                        self.equipments.append(equipment)
-                    }
-                }
-                
-            }
-        }
+
         
         let totalEquipmentStackView = UIStackView()
         totalEquipmentStackView.axis = .vertical
@@ -311,7 +250,7 @@ class RecipeDetailsViewController: UIViewController {
         equipmentStackLabel.font = UIFont(name: "Montserrat-SemiBold", size: 16)
         equipmentStackLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        for equipment in self.equipments {
+        for equipment in self.recipe.equipments {
             let equipmentView = UIStackView()
             equipmentView.axis = .horizontal
             equipmentView.alignment = .center
@@ -339,7 +278,7 @@ class RecipeDetailsViewController: UIViewController {
             totalEquipmentStackView.addArrangedSubview(equipmentView)
         }
         
-        if !self.equipments.isEmpty {
+        if !self.recipe.equipments.isEmpty {
             verticalStack.addArrangedSubview(equipmentStackLabel)
             verticalStack.addArrangedSubview(totalEquipmentStackView)
         }
@@ -434,40 +373,30 @@ class RecipeDetailsViewController: UIViewController {
     }
     
     @objc func checkBoxButtonTapped(sender: IngredientButton) {
-        if shoppingList.contains(sender.ingredient) {
-            PersistenceManager.updateWith(ingredient: sender.ingredient, actionType: .remove) { error in
-                print(error)
+        let ingredient = Ingredient(id: sender.ingredient.id, name: sender.ingredient.name, image: sender.ingredient.image)
+        if sender.ingredient.isIngredientInShoppingList {
+            PersistenceManager.updateWith(ingredient: ingredient, actionType: .remove) { error in
             }
             sender.setBackgroundImage(UIImage(systemName: "square"), for: .normal)
         }else {
-            PersistenceManager.updateWith(ingredient: sender.ingredient, actionType: .add) { error in
-                print(error)
+            PersistenceManager.updateWith(ingredient: ingredient, actionType: .add) { error in
             }
             sender.setBackgroundImage(UIImage(systemName: "checkmark.square"), for: .normal)
         }
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        delegate?.favouritesChanged()
-    }
-    
     @objc func bookMarkButtonTapped(sender: UIButton) {
-        isFavourite.toggle()
-        print(isFavourite)
-        if isFavourite {
-            
+        recipe.isRecipeFavourite.toggle()
+        if recipe.isRecipeFavourite {
             bookmarkButton.setBackgroundImage(UIImage(systemName: "bookmark.fill"), for: .normal)
-            PersistenceManager.updateWith(favouriteId: recipe.id, action: .add) { error in
-                print(error)
-            }
         }
-
         else {
             bookmarkButton.setBackgroundImage(UIImage(systemName: "bookmark"), for: .normal)
-            PersistenceManager.updateWith(favouriteId: recipe.id, action: .remove) { error in
-                print(error)
-            }
         }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        delegate?.favouritesChanged()
     }
     
 }

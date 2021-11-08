@@ -26,7 +26,7 @@ class IngredientCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setup(with ingredient: Ingredient) {
+    func setup(with ingredient: IngredientViewModel) {
         ingredientName.text = ingredient.name
         let downloadUrl = "https://spoonacular.com/cdn/ingredients_100x100/" + ingredient.image
         ingredientImage.downloadImage(from: downloadUrl)

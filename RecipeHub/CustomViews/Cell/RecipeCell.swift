@@ -25,19 +25,14 @@ class RecipeCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setRecipe(recipe: Recipe) {
-        guard let image = recipe.image else {
-            print("HAAAAN")
+    func setRecipe(recipeViewModel: RecipeViewModel) {
+        guard let image = recipeViewModel.image else {
             return
         }
         recipeImageview.downloadImage(from: image)
-        recipeName.text = recipe.title
-        durationLabel.text = recipe.readyInMinutes.description + " minutes"
-        if recipe.vegetarian{
-            vegeterianImageView.isHidden = false
-        } else {
-            vegeterianImageView.isHidden = true
-        }
+        recipeName.text = recipeViewModel.title
+        durationLabel.text = recipeViewModel.durationLabel
+        vegeterianImageView.isHidden = !recipeViewModel.vegetarian
     }
     
     func configure() {

@@ -18,9 +18,9 @@ class SearchRecipesViewController: UIViewController,TagListViewDelegate {
     let tagStack = UIStackView()
     var ingredientList:[String] = []
     var collectionview: UICollectionView!
-    var dataSource: UICollectionViewDiffableDataSource<Section,Recipe>!
+    var dataSource: UICollectionViewDiffableDataSource<Section,RecipeViewModel>!
     let collectionstack = UIStackView()
-    var recipes: [Recipe] = []
+    var recipes: [RecipeViewModel] = []
     var recipeIds:[Int] = []
     var offSet: Int = 0
     
@@ -88,7 +88,7 @@ class SearchRecipesViewController: UIViewController,TagListViewDelegate {
                 DispatchQueue.main.sync {
                     self.dismissLoadingView()
                 }
-                self.recipes += recipes
+                self.recipes += recipes.map({ RecipeViewModel(recipe: $0) })
                 print(recipes)
                 self.updateData()
             case .failure(let error):
@@ -208,15 +208,15 @@ class SearchRecipesViewController: UIViewController,TagListViewDelegate {
     }
     
     func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section,Recipe>(collectionView: self.collectionview, cellProvider: { collectionView, indexPath, recipe in
+        dataSource = UICollectionViewDiffableDataSource<Section,RecipeViewModel>(collectionView: self.collectionview, cellProvider: { collectionView, indexPath, recipeModel in
             let cell = self.collectionview.dequeueReusableCell(withReuseIdentifier: RecipeCell.reuseId, for: indexPath) as? RecipeCell
-            cell?.setRecipe(recipe: recipe)
+            cell?.setRecipe(recipeViewModel: recipeModel)
             return cell
         })
     }
     
     func updateData() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section,Recipe>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section,RecipeViewModel>()
         snapshot.appendSections([.main])
         snapshot.appendItems(self.recipes)
         DispatchQueue.main.async {

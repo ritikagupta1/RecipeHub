@@ -11,7 +11,7 @@ class IngredientViewController: UIViewController, UITableViewDataSource,UITableV
    
 
     var tableView: UITableView!
-    var ingredientList: [Ingredient] = []
+    var ingredientList: [IngredientViewModel] = []
     
     
     override func viewDidLoad() {
@@ -32,10 +32,12 @@ class IngredientViewController: UIViewController, UITableViewDataSource,UITableV
     }
     
     func getIngredients() {
-        PersistenceManager.retrieveShoppingIngredients { result in
+        PersistenceManager.retrieveShoppingIngredients {  result in
             switch result {
             case .success(let ingredients):
-                self.ingredientList = ingredients
+                self.ingredientList = ingredients.map({ IngredientViewModel(ingredient: $0)
+                })
+                self.tableView.reloadData()
             case .failure(let error):
                 print(error)
             }
@@ -77,7 +79,8 @@ class IngredientViewController: UIViewController, UITableViewDataSource,UITableV
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete else { return }
         
-        let ingredient = ingredientList[indexPath.row]
+        let ingredientModel = ingredientList[indexPath.row]
+        let ingredient = Ingredient(id: ingredientModel.id, name: ingredientModel.name, image: ingredientModel.image)
         ingredientList.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .left)
         

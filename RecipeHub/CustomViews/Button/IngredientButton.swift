@@ -7,9 +7,9 @@
 
 import UIKit
 class IngredientButton: UIButton {
-    var ingredient: Ingredient!
+    var ingredient: IngredientViewModel!
     
-    init(ingredient: Ingredient) {
+    init(ingredient: IngredientViewModel) {
         super.init(frame: .zero)
         self.ingredient = ingredient
     }

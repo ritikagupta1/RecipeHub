@@ -12,12 +12,12 @@ class AllRecipesViewController: UIViewController {
     enum Section {
         case main
     }
-    var recipes: [Recipe] = []
-    var filteredRecipes: [Recipe] = []
+    var recipeViewModels: [RecipeViewModel] = []
+    var filteredRecipeModels: [RecipeViewModel] = []
     var offSet: Int = 0
     var hasMoreRecipes: Bool = true
     var collectionView: UICollectionView!
-    var dataSource: UICollectionViewDiffableDataSource<Section,Recipe>!
+    var dataSource: UICollectionViewDiffableDataSource<Section,RecipeViewModel>!
     var isSearching: Bool = false
     
     override func viewDidLoad() {
@@ -74,8 +74,10 @@ class AllRecipesViewController: UIViewController {
                 if recipes.count < 10 {
                     self.hasMoreRecipes = false
                 }
-                self.recipes += recipes
-                self.updateData(recipes: self.recipes)
+                self.recipeViewModels += recipes.map({ RecipeViewModel(recipe: $0)
+                })
+                
+                self.updateData(recipeViewModels: self.recipeViewModels)
                 self.offSet += 10
             case .failure(let error):
                 print(error)
@@ -84,17 +86,17 @@ class AllRecipesViewController: UIViewController {
     }
     
     func configureDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section,Recipe>(collectionView: self.collectionView, cellProvider: { collectionView, indexPath, recipe in
+        dataSource = UICollectionViewDiffableDataSource<Section,RecipeViewModel>(collectionView: self.collectionView, cellProvider: { collectionView, indexPath, recipe in
             let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: RecipeCell.reuseId, for: indexPath) as? RecipeCell
-            cell?.setRecipe(recipe: recipe)
+            cell?.setRecipe(recipeViewModel: recipe)
             return cell
         })
     }
    
-    func updateData(recipes: [Recipe]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section,Recipe>()
+    func updateData(recipeViewModels: [RecipeViewModel]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section,RecipeViewModel>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(recipes)
+        snapshot.appendItems(recipeViewModels)
         DispatchQueue.main.async {
             self.dataSource.apply(snapshot,animatingDifferences: true)
         }
@@ -128,7 +130,7 @@ extension AllRecipesViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let recipeDetailVC = RecipeDetailsViewController()
-        recipeDetailVC.recipe = isSearching ? self.filteredRecipes[indexPath.row] :  self.recipes[indexPath.row]
+        recipeDetailVC.recipe = isSearching ? self.filteredRecipeModels[indexPath.row] :  self.recipeViewModels[indexPath.row]
         let navController = UINavigationController(rootViewController: recipeDetailVC)
         present(navController, animated: true)
     }
@@ -147,23 +149,24 @@ extension AllRecipesViewController: UISearchBarDelegate {
             case .success(let filteredrecipes):
                 DispatchQueue.main.sync {
                     self.dismissLoadingView()
-                    self.filteredRecipes = filteredrecipes
-                    self.updateData(recipes: filteredrecipes)
+                    self.filteredRecipeModels = filteredrecipes.map({ RecipeViewModel(recipe: $0)
+                    })
+                    self.updateData(recipeViewModels: self.filteredRecipeModels)
                 }
-               
-                
+
+
             case .failure(let error):
                 print(error)
-                
+
             }
-        
+
         }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         print("cancel")
         isSearching = false
-        updateData(recipes: self.recipes)
+        updateData(recipeViewModels: self.recipeViewModels)
     }
     
 }

@@ -11,10 +11,10 @@ class FavouriteRecipeViewController: UIViewController {
     enum Section {
         case main
     }
-    var favouriteRecipes: [Recipe] = []
+    var favouriteRecipes: [RecipeViewModel] = []
     var favouriteRecipeIds: [Int] = []
     var collectionView: UICollectionView!
-    var datasource: UICollectionViewDiffableDataSource<Section,Recipe>!
+    var datasource: UICollectionViewDiffableDataSource<Section,RecipeViewModel>!
     
     
     
@@ -82,7 +82,8 @@ class FavouriteRecipeViewController: UIViewController {
             switch result {
             case .success(let recipes):
                 //self.dismissLoadingView()
-                self.favouriteRecipes = recipes
+                self.favouriteRecipes = recipes.map({ RecipeViewModel(recipe: $0)
+                })
                 self.updateData()
             case .failure(let error):
                 print(error)
@@ -102,15 +103,15 @@ class FavouriteRecipeViewController: UIViewController {
     }
     
     func configureCollectionViewDatasource() {
-        datasource = UICollectionViewDiffableDataSource<Section,Recipe>(collectionView: collectionView, cellProvider: { collectionview, indexPath, recipe in
+        datasource = UICollectionViewDiffableDataSource<Section,RecipeViewModel>(collectionView: collectionView, cellProvider: { collectionview, indexPath, recipeModel in
             let cell = collectionview.dequeueReusableCell(withReuseIdentifier: RecipeCell.reuseId, for: indexPath) as? RecipeCell
-            cell?.setRecipe(recipe: recipe)
+            cell?.setRecipe(recipeViewModel: recipeModel)
             return cell
         })
     }
     
     func updateData() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section,Recipe>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section,RecipeViewModel>()
         snapshot.appendSections([Section.main])
         snapshot.appendItems(self.favouriteRecipes)
         DispatchQueue.main.async {
