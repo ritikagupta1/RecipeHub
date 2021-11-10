@@ -61,13 +61,13 @@ class AllRecipesViewController: UIViewController {
     }
     
     func getAllRecipes() {
-        showLoadingView()
+        let loadingView = showLoadingView()
         NetworkManager.shared.getAllRecipes(offset: offSet) { [weak self] result in
             guard let self = self else {
                 return
             }
             DispatchQueue.main.sync {
-                self.dismissLoadingView()
+                loadingView.removeFromSuperview()
             }
             switch result {
             case .success(let recipes):
@@ -141,14 +141,14 @@ extension AllRecipesViewController: UISearchBarDelegate {
         guard let title = searchBar.text, !title.isEmpty else {
             return
         }
-        showLoadingView()
+        let loadingView = showLoadingView()
         isSearching = true
         print(title)
         NetworkManager.shared.getRecipeContainingTitle(title: title) { result in
             switch result {
             case .success(let filteredrecipes):
                 DispatchQueue.main.sync {
-                    self.dismissLoadingView()
+                    loadingView.removeFromSuperview()
                     self.filteredRecipeModels = filteredrecipes.map({ RecipeViewModel(recipe: $0)
                     })
                     self.updateData(recipeViewModels: self.filteredRecipeModels)

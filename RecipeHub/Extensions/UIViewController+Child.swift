@@ -1,12 +1,10 @@
 import UIKit
 
-fileprivate var containerView: UIView!
-
 extension UIViewController {
     
-    func showLoadingView() {
+    func showLoadingView() -> UIView {
         print("SHOW - \(self)")
-        containerView = UIView(frame: self.view.bounds)
+        let containerView = UIView(frame: self.view.bounds)
         view.addSubview(containerView)
         containerView.alpha = 0
         containerView.backgroundColor = .systemBackground
@@ -21,14 +19,8 @@ extension UIViewController {
             activityIndicator.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
         ])
         activityIndicator.startAnimating()
+        return containerView
     }
-    
-    func dismissLoadingView() {
-        print("DISMISS - \(self)")
-        containerView.removeFromSuperview()
-        containerView = nil
-    }
-    
     
     func add(_ child: UIViewController, toView: UIView? = nil, position: Int? = nil) {
         addChild(child)

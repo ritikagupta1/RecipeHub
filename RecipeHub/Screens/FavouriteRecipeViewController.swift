@@ -20,15 +20,15 @@ class FavouriteRecipeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        configureCollectionView()
+        configureViewController()
+        configureCollectionViewDatasource()
     
         // Do any additional setup after loading the view.
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        configureViewController()
-        configureCollectionView()
-        configureCollectionViewDatasource()
+        super.viewDidAppear(animated)
         getFavouriteRecipeIds()
     }
     
@@ -74,14 +74,16 @@ class FavouriteRecipeViewController: UIViewController {
     
     func getRecipeInformationFromIds() {
         print("HERE1")
-        //self.showLoadingView()
+        let loadingView = self.showLoadingView()
         NetworkManager.shared.getRecipeInformationById(ids: favouriteRecipeIds, offset: 0) {[weak self] result in
             guard let self = self else {
                 return
             }
             switch result {
             case .success(let recipes):
-                //self.dismissLoadingView()
+                DispatchQueue.main.sync {
+                    loadingView.removeFromSuperview()
+                }
                 self.favouriteRecipes = recipes.map({ RecipeViewModel(recipe: $0)
                 })
                 self.updateData()

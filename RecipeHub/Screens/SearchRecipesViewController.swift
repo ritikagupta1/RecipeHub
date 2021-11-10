@@ -53,14 +53,13 @@ class SearchRecipesViewController: UIViewController,TagListViewDelegate {
     }
     
     func findRecipeIds(ingredientList: [String]) {
-        self.showLoadingView()
+        let loadingView = self.showLoadingView()
         NetworkManager.shared.getRecipeIdsFromIngredients(ingredientList: ingredientList) { result in
             switch result {
             case .success(let ids):
                 if ids.isEmpty {
                     print("Empty")
                     DispatchQueue.main.sync {
-                        self.dismissLoadingView()
                         self.showAlertonMainThread(alertTitle: "No Recipes Found", message: "Please try another combination of Ingredients", buttonTitle: "Okay")
                         self.updateData()
                     }
@@ -70,7 +69,7 @@ class SearchRecipesViewController: UIViewController,TagListViewDelegate {
                 self.recipeIds = ids
                 print(self.recipeIds)
                 print(self.recipeIds.count)
-                self.getRecipeInformationFromIds()
+                self.getRecipeInformationFromIds(loadingView: loadingView)
             case .failure:
                 print("Failed")
                 
@@ -78,7 +77,7 @@ class SearchRecipesViewController: UIViewController,TagListViewDelegate {
         }
     }
     
-    func getRecipeInformationFromIds() {
+    func getRecipeInformationFromIds(loadingView: UIView? = nil) {
         let recipeIds = Array(self.recipeIds[offSet ..<  min(offSet+10,recipeIds.count)])
         print(recipeIds)
         
@@ -86,7 +85,7 @@ class SearchRecipesViewController: UIViewController,TagListViewDelegate {
             switch result {
             case .success(let recipes):
                 DispatchQueue.main.sync {
-                    self.dismissLoadingView()
+                    loadingView?.removeFromSuperview()
                 }
                 self.recipes += recipes.map({ RecipeViewModel(recipe: $0) })
                 print(recipes)
